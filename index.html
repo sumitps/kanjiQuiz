@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanji Quiz!</title>
+     <script src="score.js"></script>
+     <script src="questions.js"></script>
+     <script src="choices.js"></script>
+     <script src="answers.js"></script>
+     <script src="controller.js"></script>
+     <script src="jquery-3.5.1.js" type="text/javascript"></script>
+     <script>
+        function enableNext(){
+            document.getElementById('next').removeAttribute("disabled");
+        }
+        function disableNext(){
+            document.getElementById('next').addAttribute("disabled");
+        }
+        function startQuiz(){
+            document.getElementById('quizDiv').style.display = 'block';
+            beginQuiz();
+            document.getElementById('quizEnded').style.display = 'none';
+            document.getElementById('summary').style.display = 'none';
+            $('#summaryTable tbody').html("");
+        }    
+        function endQuiz(){
+            document.getElementById('quizDiv').style.display = 'none';
+            QuizEnded();
+            document.getElementById('summary').style.display = 'block';
+            $("#summaryTable tbody").append(summary);
+            init();
+        }
+        function check(){
+            var ans = $('input[name="choice"]:checked').val();
+            if(checkAnswer(ans, quiz.cq, quiz.type)){
+                updateScore();
+                updateRowInSummaryTable(ans, true);
+            }else{
+                updateRowInSummaryTable(ans, false);
+            }
+            
+            if(quiz.cqno == quiz.total){
+                console.log("Ended");
+                endQuiz();
+            }else{
+                setNext();
+            }
+        }      
+     </script>
+     <script type="text/javascript" language="javascript" src="kanji.js"></script> 
+     <script type="text/javascript">
+        $(document).ready(function(e) {
+              kanjis = kanjiObject;
+              init();
+        });
+     </script>
+     <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 50%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        </style>
+</head>
+<body>
+    <h1>Kanji Quiz!</h1>
+    <div id='scoreDiv'>
+        <label id='score'>Score: ${correct} out of ${total}</label>
+    </div>
+    <br>
+    <div id='quizMetaDiv'>
+        Grade: <select name="grade" id="grade">
+            <option selected value="5">N5</option>
+            <option value="4">N4</option>
+            <option value="3">N3</option>
+            <option value="2">N2</option>
+            <option value="1">N1</option>
+        </select>
+        Number of Questions: <select name="limit" id="limit">
+            <option selected value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+        </select>
+        Type: <select name="type" id="type">
+            <option value="readings_on">On Readings</option>
+            <option value="readings_kun">Kun Readings</option>
+            <option selected value="meanings">Meanings</option>            
+        </select>
+        <br><br>
+        <button onclick="startQuiz()">New Quiz</button>
+        <button onclick="endQuiz()">Reset Quiz</button>
+    </div><br><br>
+    
+    <div id='quizDiv' style="display: none;">
+        <label id='questionNo'>${questionNo}</label>
+        <label id='question'>${question}</label>
+        <br><br>
+        <input type="radio" name="choice" id="choice1" value="" onclick="enableNext()"> 
+        <label for="choice1" id='lch1'></label>
+        <input type="radio" name="choice" id="choice2" value="" onclick="enableNext()"> 
+        <label for="choice2" id='lch2'></label>
+        <input type="radio" name="choice" id="choice3" value="" onclick="enableNext()"> 
+        <label for="choice3" id='lch3'></label>
+        <input type="radio" name="choice" id="choice4" value="" onclick="enableNext()"> 
+        <label for="choice4" id='lch4'></label>
+        <br><br>
+        <button id="next" disabled onclick="check()">Next</button>
+        <button id="submit" onclick="endQuiz()">Submit Quiz</button>      
+    </div>
+
+    <div id='quizEnded' style='display:none'>
+        <label id='finalScore'> Final Score: </label>
+    </div>
+
+    <div id='summary' style='display:none'>
+        <table id='summaryTable'>
+            <thead>
+                <tr>
+                    <th>Kanji</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+</html>
